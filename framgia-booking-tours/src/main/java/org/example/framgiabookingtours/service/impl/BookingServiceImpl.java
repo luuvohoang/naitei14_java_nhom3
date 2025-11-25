@@ -1,6 +1,7 @@
 package org.example.framgiabookingtours.service.impl;
 
 import org.example.framgiabookingtours.dto.request.BookingRequestDTO;
+import org.example.framgiabookingtours.dto.response.BookingResponseDTO;
 import org.example.framgiabookingtours.entity.Booking;
 import org.example.framgiabookingtours.entity.Tour;
 import org.example.framgiabookingtours.entity.User;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -105,14 +107,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getMyBookings(String userEmail) {
+    public List<BookingResponseDTO> getMyBookings(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+        // Lấy List<Booking> từ DB (đã có @EntityGraph để fetch tour/user)
         List<Booking> bookings = bookingRepository.findByUserId(user.getId());
 
-        log.info("Tìm thấy {} booking(s) cho user: {}", bookings.size(), userEmail);
-        return bookings;
+        // Chuyển đổi (Map) từ Entity sang DTO
+        return bookings.stream()
+                .map(BookingResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 }
 

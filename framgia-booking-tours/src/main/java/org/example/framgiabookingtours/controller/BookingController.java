@@ -2,6 +2,7 @@ package org.example.framgiabookingtours.controller;
 
 import org.example.framgiabookingtours.dto.ApiResponse;
 import org.example.framgiabookingtours.dto.request.BookingRequestDTO;
+import org.example.framgiabookingtours.dto.response.BookingResponseDTO;
 import org.example.framgiabookingtours.entity.Booking;
 import org.example.framgiabookingtours.service.BookingService;
 import jakarta.validation.Valid;
@@ -21,11 +22,11 @@ public class BookingController {
 
 
     @GetMapping("/my-bookings")
-    public ApiResponse<List<Booking>> getMyBookings() {
+    public ApiResponse<List<BookingResponseDTO>> getMyBookings() {
         String userEmail = getCurrentUserEmail();
-        List<Booking> bookings = bookingService.getMyBookings(userEmail);
+        List<BookingResponseDTO> bookings = bookingService.getMyBookings(userEmail);
 
-        return ApiResponse.<List<Booking>>builder()
+        return ApiResponse.<List<BookingResponseDTO>>builder()
                 .code(1000)
                 .message("Lấy danh sách booking thành công")
                 .result(bookings)
